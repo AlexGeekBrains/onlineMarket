@@ -1,8 +1,8 @@
 package com.onlineMarket.controllers;
 
-import com.onlineMarket.bean.Cart;
-import com.onlineMarket.dto.ProductDto;
+import com.onlineMarket.dto.Cart;
 import com.onlineMarket.dto.ProductInCartDto;
+import com.onlineMarket.services.CartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,22 +10,31 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("api/v1/carts")
+@RequestMapping("api/v1/cart")
 public class CartController {
-    private final Cart cart;
+    private final CartService cartService;
 
     @GetMapping()
-    public List<ProductInCartDto> showCart() {
-        return cart.getProducts();
+    public Cart getCurrentCart() {
+        return cartService.getCurrentCart();
     }
 
     @GetMapping("/add")
-    public List<ProductInCartDto> addProductToCart(@RequestParam Long productId) {
-        return cart.addProductCartById(productId);
+    public void addProductToCart(@RequestParam Long productId) {
+        cartService.add(productId);
     }
 
     @GetMapping("/remove/{productId}")
-    public List<ProductInCartDto> removeProductFromCart(@PathVariable Long productId) {
-        return cart.removeProductFromCartById(productId);
+    public void removeProductFromCart(@PathVariable Long productId) {
+        cartService.delete(productId);
+    }
+    @GetMapping("/clear")
+    public void clearCart() {
+        cartService.clear();
+    }
+
+    @GetMapping("/change_quantity")
+    public void changeQuantityProductInCart(@RequestParam Long productId, Integer delta) {
+        cartService.changeQuantityProduct(productId,delta);
     }
 }

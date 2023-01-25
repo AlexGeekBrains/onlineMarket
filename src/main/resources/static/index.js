@@ -15,7 +15,7 @@ angular.module('app', ['ngStorage']).controller('productController', function ($
                 max_cost: $scope.filter ? $scope.filter.max_cost : null
             }
         }).then(function (response) {
-            $scope.ProductsList = response.data.content;
+            $scope.productsList = response.data.content;
             $scope.filter.min_cost = null;
             $scope.filter.max_cost = null;
             $scope.filter.part_title = null;
@@ -55,15 +55,15 @@ angular.module('app', ['ngStorage']).controller('productController', function ($
     }
 
     $scope.loadCart = function () {
-        $http.get(contextPath + '/carts')
+        $http.get(contextPath + '/cart')
             .then(function (response) {
-                $scope.CartList = response.data;
+                $scope.cart = response.data;
             });
     };
 
     $scope.addToCart = function (productId) {
         $http({
-            url: contextPath + '/carts/add',
+            url: contextPath + '/cart/add',
             method: 'GET',
             params: {
                 productId: productId,
@@ -75,7 +75,7 @@ angular.module('app', ['ngStorage']).controller('productController', function ($
 
     $scope.deleteProductFromCart = function (productId) {
         $http({
-            url: contextPath + '/carts/remove/' + productId,
+            url: contextPath + '/cart/remove/' + productId,
             method: 'GET',
         }).then(function (response) {
             $scope.loadCart();
@@ -118,6 +118,27 @@ angular.module('app', ['ngStorage']).controller('productController', function ($
             return false;
         }
     };
+
+    $scope.clearCart = function () {
+        $http({
+            url: contextPath + '/cart/clear' ,
+            method: 'GET',
+        }).then(function (response) {
+            $scope.loadCart();
+        });
+    }
+    $scope.changeQuantity = function (productId, delta) {
+        $http({
+            url: contextPath + '/cart/change_quantity',
+            method: 'GET',
+            params: {
+                productId: productId,
+                delta: delta
+            }
+        }).then(function (response) {
+            $scope.loadCart();
+        });
+    }
 
     $scope.loadProducts();
     $scope.loadCart();
