@@ -53,7 +53,7 @@
             <td>Действие</td>
         </tr>
         <tbody>
-        <tr ng-repeat="p in ProductsList">
+        <tr ng-repeat="p in productsList">
             <td>{{p.id}}</td>
             <td>{{p.title}}</td>
             <td>
@@ -104,17 +104,42 @@
             <td>Наименование товара</td>
             <td>Цена</td>
             <td>Количество</td>
+            <td></td>
+            <td>Сумма</td>
         </tr>
         <tbody>
-        <tr ng-repeat="p in CartList">
-            <td>{{p.id}}</td>
-            <td>{{p.title}}</td>
-            <td>{{p.cost}}</td>
-            <td>{{p.quantity}}</td>
+        <tr ng-repeat="product in cart.products">
+            <td>{{product.productId}}</td>
+            <td>{{product.productTitle}}</td>
+            <td>{{product.costPerProduct}}</td>
             <td>
-                <button class="btn btn-danger" ng-click="deleteProductFromCart(p.id)">Удалить</button>
+                <button class="btn btn-primary" ng-click="changeQuantity(product.productId, -1)">-</button>
+                {{product.quantity}}
+                <button class="btn btn-primary" ng-click="changeQuantity(product.productId, +1)">+</button>
             </td>
+            <td> х </td>
+            <td>{{product.cost }}</td>
+            <td>
+                <button class="btn btn-danger" ng-click="deleteProductFromCart(product.productId)">Удалить</button>
+            </td>
+        <tr >
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>Итого</td>
+            <td></td>
+            <td>{{cart.totalCost}}</td>
         </tr>
+        <tr >
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td><button class="btn btn-danger" ng-click="clearCart()">Очистить корзину</button></td>
+        </tr>
+        </tr>
+
         </tbody>
     </table>
 </div>

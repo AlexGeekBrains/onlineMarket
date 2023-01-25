@@ -17,11 +17,11 @@ public class ProductConverter {
         return new ProductDto(product.getId(), product.getTitle(), product.getCost());
     }
 
-    public ProductInCartDto productDtoToProductInCartDto(ProductDto productDto, int quantity) {
-        return new ProductInCartDto(productDto.getId(), productDto.getTitle(), productDto.getCost(), quantity);
+    public ProductInCartDto entityToProductInCartDto(Product product, int quantity) {
+        return new ProductInCartDto(product.getId(), product.getTitle(), product.getCost(), quantity);
     }
 
-    public ProductDto ProductInCartDtoToProductDto( ProductInCartDto productInCartDto) {
-        return new ProductDto(productInCartDto.getId(), productInCartDto.getTitle(), productInCartDto.getCost());
+    public Product productInCartDtoToEntity(ProductInCartDto productInCartDto) {
+        return new Product(productInCartDto.getProductId(), productInCartDto.getProductTitle(), productInCartDto.getCostPerProduct());
     }
 }

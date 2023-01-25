@@ -31,6 +31,7 @@ public class SecurityConfig {
                 .antMatchers("h2-console/**").permitAll()
                 .anyRequest().permitAll()
                 .and()
+                .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .headers().frameOptions().disable()
