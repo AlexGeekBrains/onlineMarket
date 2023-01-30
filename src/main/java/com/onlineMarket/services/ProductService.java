@@ -1,5 +1,6 @@
 package com.onlineMarket.services;
 
+import com.onlineMarket.aspect.Timer;
 import com.onlineMarket.data.Product;
 import com.onlineMarket.repository.ProductRepository;
 import com.onlineMarket.repository.specifications.ProductSpecification;
@@ -10,12 +11,12 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
 import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Timer
 public class ProductService {
     private final ProductRepository productRepository;
     private final ProductSpecification productSpecification;

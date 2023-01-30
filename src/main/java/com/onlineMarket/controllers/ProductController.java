@@ -4,6 +4,7 @@ import com.onlineMarket.converters.ProductConverter;
 import com.onlineMarket.data.Product;
 import com.onlineMarket.dto.ProductDto;
 import com.onlineMarket.services.ProductService;
+import com.onlineMarket.validators.ProductValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,7 @@ public class ProductController {
     private final ProductService productService;
     private final ProductConverter productConverter;
 
+    private final ProductValidator productValidator;
     @GetMapping()
     public Page<ProductDto> showProducts(
             @RequestParam(name = "page", defaultValue = "1") Integer page,
@@ -48,9 +50,10 @@ public class ProductController {
     }
 
     @PostMapping()
-    public ProductDto addProduct(@RequestBody Product product) {
-        product.setId(null);
-        return productConverter.entityToDto(productService.saveProduct(product));
+    public void addProduct(@RequestBody ProductDto productDto) {
+        productValidator.validate(productDto);
+        productDto.setId(null);
+        productService.saveProduct(productConverter.dtoToEntity(productDto));
     }
 
     @PutMapping()

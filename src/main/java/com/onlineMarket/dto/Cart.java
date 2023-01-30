@@ -27,28 +27,26 @@ public class Cart {
     }
 
     public void addProduct(Product product) {
-        boolean isContains = false;
         for (ProductInCartDto prod : products) {
-            if (productConverter.productInCartDtoToEntity(prod).equals(product)) {
-                isContains = true;
+            if (prod.getProductId().equals(product.getId())) {
                 prod.setQuantity(prod.getQuantity() + 1);
                 prod.recalculateCost();
-                break;
+                recalculate();
+                return;
             }
         }
-        if (!isContains) {
-            products.add(productConverter.entityToProductInCartDto(product,1));
-        }
+        products.add(productConverter.entityToProductInCartDto(product, 1));
         recalculate();
     }
 
-    public void changeQuantity(Long productId, Integer delta){
+
+    public void changeQuantity(Long productId, Integer delta) {
         for (int i = 0; i < products.size(); i++) {
-            if(products.get(i).getProductId().equals(productId)){
-                if(products.get(i).getQuantity()+delta>0){
-                    products.get(i).setQuantity(products.get(i).getQuantity()+delta);
+            if (products.get(i).getProductId().equals(productId)) {
+                if (products.get(i).getQuantity() + delta > 0) {
+                    products.get(i).setQuantity(products.get(i).getQuantity() + delta);
                     products.get(i).recalculateCost();
-                }else {
+                } else {
                     products.remove(i);
                 }
                 recalculate();
@@ -57,12 +55,13 @@ public class Cart {
         }
     }
 
-    public void clearCart(){
+    public void clearCart() {
         products.clear();
         recalculate();
     }
+
     public void removeProduct(Product product) {
-        products.remove(products.stream().filter(prod -> productConverter.productInCartDtoToEntity(prod).equals(product)).findFirst().orElseThrow(() -> new RuntimeException("Product not found")));
+        products.remove(products.stream().filter(prod -> prod.getProductId().equals(product.getId())).findFirst().orElseThrow(() -> new RuntimeException("Product not found")));
         recalculate();
     }
 
