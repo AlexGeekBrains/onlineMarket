@@ -3,6 +3,7 @@ package com.onlineMarket.converters;
 import com.onlineMarket.data.Product;
 import com.onlineMarket.dto.ProductDto;
 import com.onlineMarket.dto.ProductInCartDto;
+import com.onlineMarket.soap.products.ProductSoap;
 import org.springframework.stereotype.Component;
 
 
@@ -23,5 +24,13 @@ public class ProductConverter {
 
     public Product productInCartDtoToEntity(ProductInCartDto productInCartDto) {
         return new Product(productInCartDto.getProductId(), productInCartDto.getProductTitle(), productInCartDto.getCostPerProduct());
+    }
+
+    public ProductSoap entityToProductSoap(Product product) {
+        ProductSoap productSoap = new ProductSoap();
+        productSoap.setId(product.getId());
+        productSoap.setCost(product.getCost());
+        productSoap.setTitle(product.getTitle());
+        return productSoap;
     }
 }
