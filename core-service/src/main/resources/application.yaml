@@ -22,3 +22,10 @@ spring:
 logging:
   level:
     com.onlineMarket.services: DEBUG
+
+integrations:
+  cart-service:
+    url: http://localhost:8190/store-carts
+    connect-timeout: 5000
+    read-timeout: 10000
+    write-timeout: 5000

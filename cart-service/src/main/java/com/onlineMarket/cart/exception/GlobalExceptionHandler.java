@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-
 @ControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
@@ -17,5 +16,4 @@ public class GlobalExceptionHandler {
         log.error(e.getMessage(), e);
         return new ResponseEntity<>(new AppError(HttpStatus.NOT_FOUND.value(), e.getMessage()), HttpStatus.NOT_FOUND);
     }
-
 }

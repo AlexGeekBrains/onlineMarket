@@ -1,4 +1,4 @@
-package com.onlineMarket.core.data;
+package com.onlineMarket.auth.entities;
 
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -18,6 +18,7 @@ public class Role {
 
     @Column(name = "name")
     private String name;
+
     @CreationTimestamp
     @Column(name = "created_at")
     private LocalDateTime createdAt;
