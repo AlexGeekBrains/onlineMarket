@@ -3,7 +3,6 @@ package com.onlineMarket.core.services;
 import com.onlineMarket.api.ResourceNotFoundException;
 import com.onlineMarket.api.dto.CartDto;
 import com.onlineMarket.api.dto.OrderDetailsDto;
-import com.onlineMarket.core.data.User;
 
 
 import com.onlineMarket.core.integrations.CartServiceIntegration;
@@ -27,12 +26,12 @@ public class OrderService {
     private final ProductService productsService;
 
     @Transactional
-    public void createOrder(User user, OrderDetailsDto orderDetailsDto) {
+    public void createOrder(String username, OrderDetailsDto orderDetailsDto) {
         CartDto currentCart = cartServiceIntegration.getCart();
         Order order = new Order();
         order.setAddress(orderDetailsDto.getAddress());
         order.setPhone(orderDetailsDto.getPhone());
-        order.setUser(user);
+        order.setUsername(username);
         order.setTotalPrice(currentCart.getTotalPrice());
         List<OrderItem> items = currentCart.getProducts().stream()
                 .map(o -> {
@@ -52,6 +51,4 @@ public class OrderService {
     public List<Order> findOrdersByUsername(String username) {
         return ordersRepository.findAllByUsername(username);
     }
-
-
 }

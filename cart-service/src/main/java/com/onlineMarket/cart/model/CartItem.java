@@ -4,17 +4,19 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class CartItem {
     private Long productId;
     private String productTitle;
-    private Integer pricePerProduct;
+    private BigDecimal pricePerProduct;
     private Integer quantity;
-    private Integer price;
+    private BigDecimal price;
 
-    public CartItem(Long productId, String productTitle, Integer pricePerProduct, Integer quantity) {
+    public CartItem(Long productId, String productTitle, BigDecimal pricePerProduct, Integer quantity) {
         this.productId = productId;
         this.productTitle = productTitle;
         this.pricePerProduct = pricePerProduct;
@@ -23,7 +25,7 @@ public class CartItem {
     }
 
     private void recalculateCost() {
-        price = pricePerProduct * quantity;
+        price = pricePerProduct.multiply(BigDecimal.valueOf(quantity));
     }
     public void changeQuantity(int delta){
         quantity+=delta;

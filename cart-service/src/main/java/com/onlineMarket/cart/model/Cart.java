@@ -4,6 +4,7 @@ package com.onlineMarket.cart.model;
 import com.onlineMarket.api.dto.ProductDto;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -12,16 +13,16 @@ import java.util.List;
 public class Cart {
 
     private List<CartItem> products;
-    private Integer totalPrice;
+    private BigDecimal totalPrice;
 
     public Cart() {
         products = new ArrayList<>();
     }
 
     private void recalculate() {
-        totalPrice = 0;
+        totalPrice = BigDecimal.valueOf(0);
         for (CartItem product : products) {
-            totalPrice += product.getPrice();
+            totalPrice = totalPrice.add(product.getPrice());
         }
     }
 

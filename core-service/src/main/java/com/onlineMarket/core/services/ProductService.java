@@ -1,5 +1,6 @@
 package com.onlineMarket.core.services;
 
+import com.onlineMarket.api.ResourceNotFoundException;
 import com.onlineMarket.core.repository.specifications.ProductSpecification;
 import com.onlineMarket.core.data.Product;
 import com.onlineMarket.core.repository.ProductRepository;
@@ -10,6 +11,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,8 +38,11 @@ public class ProductService {
     }
 
     @Transactional
-    public void changePriceById(Long productId, Integer delta) {
-        productRepository.changePriceById(productId, delta);
+    public Product changePriceById(Long productId, Integer delta) {
+        Product product = productRepository.findById(productId).orElseThrow(() ->
+                new ResourceNotFoundException("Невозможно обновить продукт, не надйен в базе, id: " + productId));
+        product.setPrice(product.getPrice().add(BigDecimal.valueOf(delta)));
+        return product;
     }
 
     public Page<Product> find(Integer minPrice, Integer maxPrice, String partTitle, Integer page) {

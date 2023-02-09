@@ -1,12 +1,14 @@
 package com.onlineMarket.api.dto;
 
 
+import java.math.BigDecimal;
+
 public class CartItemDto {
     private Long productId;
     private String productTitle;
-    private Integer pricePerProduct;
+    private BigDecimal pricePerProduct;
     private Integer quantity;
-    private Integer price;
+    private BigDecimal price;
 
     public Long getProductId() {
         return productId;
@@ -24,11 +26,11 @@ public class CartItemDto {
         this.productTitle = productTitle;
     }
 
-    public Integer getPricePerProduct() {
+    public BigDecimal getPricePerProduct() {
         return pricePerProduct;
     }
 
-    public void setPricePerProduct(Integer pricePerProduct) {
+    public void setPricePerProduct(BigDecimal pricePerProduct) {
         this.pricePerProduct = pricePerProduct;
     }
 
@@ -40,13 +42,11 @@ public class CartItemDto {
         this.quantity = quantity;
     }
 
-    public Integer getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(Integer price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
-
-
 }

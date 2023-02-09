@@ -1,11 +1,10 @@
-package com.onlineMarket.core.controllers;
-
+package com.onlineMarket.auth.controllers;
 
 import com.onlineMarket.api.AppError;
 import com.onlineMarket.api.dto.JwtRequest;
 import com.onlineMarket.api.dto.JwtResponse;
-import com.onlineMarket.core.services.UserService;
-import com.onlineMarket.core.utils.JwtTokenUtil;
+import com.onlineMarket.auth.services.UserService;
+import com.onlineMarket.auth.utils.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,27 +14,24 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 
-@RequiredArgsConstructor
 @RestController
-@RequestMapping("/auth")
+@RequiredArgsConstructor
 public class AuthController {
     private final UserService userService;
-    private final AuthenticationManager authenticationManager;
     private final JwtTokenUtil jwtTokenUtil;
+    private final AuthenticationManager authenticationManager;
 
-
-    @PostMapping()
-    public ResponseEntity<?> createAuthToken(@RequestBody JwtRequest autRequest){
+    @PostMapping("/authenticate")
+    public ResponseEntity<?> createAuthToken(@RequestBody JwtRequest authRequest) {
         try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(autRequest.getUsername(),autRequest.getPassword()));
-        }catch (BadCredentialsException e){
-            return new ResponseEntity<>(new AppError(HttpStatus.UNAUTHORIZED.value(),"Incorrect username or password"),HttpStatus.UNAUTHORIZED);
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
+        } catch (BadCredentialsException e) {
+            return new ResponseEntity<>(new AppError(HttpStatus.UNAUTHORIZED.value(), "Некорректный логин или пароль"), HttpStatus.UNAUTHORIZED);
         }
-        UserDetails userDetails = userService.loadUserByUsername(autRequest.getUsername());
+        UserDetails userDetails = userService.loadUserByUsername(authRequest.getUsername());
         String token = jwtTokenUtil.generateToken(userDetails);
         return ResponseEntity.ok(new JwtResponse(token));
     }

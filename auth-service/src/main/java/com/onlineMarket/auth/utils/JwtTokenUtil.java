@@ -1,5 +1,4 @@
-package com.onlineMarket.core.utils;
-
+package com.onlineMarket.auth.utils;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -19,24 +18,33 @@ import java.util.stream.Collectors;
 public class JwtTokenUtil {
     @Value("${jwt.secret}")
     private String secret;
+
     @Value("${jwt.lifetime}")
-    private Integer jwtLifeTime;
+    private Integer jwtLifetime;
 
-    public String generateToken(UserDetails user) {
-        String username = user.getUsername();
-        List<String> authorities = user.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority).collect(Collectors.toList());
+    public String generateToken(UserDetails userDetails) {
+        Map<String, Object> claims = new HashMap<>();
+        List<String> rolesList = userDetails.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList());
+        claims.put("roles", rolesList);
 
-        Map<String, Object> claims = new HashMap<>(Map.of("roles", authorities));
-        Date issueDate = new Date();
-        Date expireDate = new Date(issueDate.getTime() + jwtLifeTime);
+        Date issuedDate = new Date();
+        Date expiredDate = new Date(issuedDate.getTime() + jwtLifetime);
         return Jwts.builder()
                 .setClaims(claims)
-                .setSubject(username)
-                .setIssuedAt(issueDate)
-                .setExpiration(expireDate)
+                .setSubject(userDetails.getUsername())
+                .setIssuedAt(issuedDate)
+                .setExpiration(expiredDate)
                 .signWith(SignatureAlgorithm.HS256, secret)
                 .compact();
+    }
+
+    private Claims getAllClaimsFromToken(String token) {
+        return Jwts.parser()
+                .setSigningKey(secret)
+                .parseClaimsJws(token)
+                .getBody();
     }
 
     public String getUsernameFromToken(String token) {
@@ -45,12 +53,5 @@ public class JwtTokenUtil {
 
     public List<String> getRoles(String token) {
         return getAllClaimsFromToken(token).get("roles", List.class);
-    }
-
-    private Claims getAllClaimsFromToken(String bearerTokenValue) {
-        return Jwts.parser()
-                .setSigningKey(secret)
-                .parseClaimsJws(bearerTokenValue)
-                .getBody();
     }
 }

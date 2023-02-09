@@ -1,4 +1,4 @@
-package com.onlineMarket.core.data;
+package com.onlineMarket.auth.entities;
 
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -26,6 +26,12 @@ public class User {
     @Column(name = "email")
     private String email;
 
+    @ManyToMany
+    @JoinTable(name = "users_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Collection<Role> roles;
+
     @CreationTimestamp
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -33,10 +39,4 @@ public class User {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
-    @ManyToMany
-    @JoinTable(name = "users_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Collection<Role> authorities;
 }

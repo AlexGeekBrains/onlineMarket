@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class CartItemConverter {
-    public CartItemDto entityToDto (CartItem cartItem){
+    public CartItemDto entityToDto(CartItem cartItem) {
         CartItemDto cartItemDto = new CartItemDto();
         cartItemDto.setPrice(cartItem.getPrice());
         cartItemDto.setPricePerProduct(cartItem.getPricePerProduct());
@@ -15,5 +15,4 @@ public class CartItemConverter {
         cartItemDto.setProductTitle(cartItem.getProductTitle());
         return cartItemDto;
     }
-
 }
