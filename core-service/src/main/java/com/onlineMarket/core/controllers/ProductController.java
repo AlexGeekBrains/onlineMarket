@@ -19,7 +19,6 @@ import org.springframework.web.server.ResponseStatusException;
 public class ProductController {
     private final ProductService productService;
     private final ProductConverter productConverter;
-
     private final ProductValidator productValidator;
     @GetMapping()
     public Page<ProductDto> showProducts(

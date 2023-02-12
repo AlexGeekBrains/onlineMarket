@@ -26,7 +26,7 @@ public class OrderService {
     private final ProductService productsService;
 
     @Transactional
-    public void createOrder(String username, OrderDetailsDto orderDetailsDto) {
+    public Order createOrder(String username, OrderDetailsDto orderDetailsDto) {
         CartDto currentCart = cartServiceIntegration.getCart();
         Order order = new Order();
         order.setAddress(orderDetailsDto.getAddress());
@@ -46,6 +46,7 @@ public class OrderService {
         order.setItems(items);
         ordersRepository.save(order);
         cartServiceIntegration.clearCart();
+        return order;
     }
 
     public List<Order> findOrdersByUsername(String username) {
