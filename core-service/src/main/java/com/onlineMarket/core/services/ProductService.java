@@ -56,7 +56,7 @@ public class ProductService {
         if (partTitle != null) {
             specification = specification.and(productSpecification.titleLike(partTitle));
         }
-        return productRepository.findAll(specification, PageRequest.of(page - 1, 50));
+        return productRepository.findAll(specification, PageRequest.of(page - 1, 4));
     }
 
     public List<Product> moreThanMinPrice(Integer minPrice) {

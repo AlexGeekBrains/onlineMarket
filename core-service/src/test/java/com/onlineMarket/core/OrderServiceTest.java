@@ -46,7 +46,7 @@ public class OrderServiceTest {
         cartItemDto.setPrice(BigDecimal.valueOf(50.00));
         cartDto.setTotalPrice(BigDecimal.valueOf(50.00));
         cartDto.setProducts(List.of(cartItemDto));
-        Mockito.doReturn(cartDto).when(cartServiceIntegration).getCart();
+        Mockito.doReturn(cartDto).when(cartServiceIntegration).getCart(null);
         Product product = new Product(10L, "Pen", BigDecimal.valueOf(10.0));
         Mockito.doReturn(Optional.of(product)).when(productsService).findById(10L);
         OrderDetailsDto orderDetailsDto = new OrderDetailsDto("Berlin", "777 77 77");

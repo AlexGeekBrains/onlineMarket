@@ -35,22 +35,22 @@ public class CartServiceTest {
         productBread.setPrice(BigDecimal.valueOf(10.0));
         Mockito.doReturn(product).when(productServiceIntegration).findById(5L);
         Mockito.doReturn(productBread).when(productServiceIntegration).findById(1L);
-        cartService.add(5L);
-        cartService.add(5L);
-        cartService.add(1L);
+        cartService.add("asd",5L);
+        cartService.add("asd",5L);
+        cartService.add("asd",1L);
         Mockito.verify(productServiceIntegration, Mockito.times(2)).findById(ArgumentMatchers.eq(5L));
-        Assertions.assertEquals(2, cartService.getCurrentCart().getProducts().size());
-        Assertions.assertEquals(BigDecimal.valueOf(210.0), cartService.getCurrentCart().getTotalPrice());
+        Assertions.assertEquals(2, cartService.getCurrentCart("asd").getProducts().size());
+        Assertions.assertEquals(BigDecimal.valueOf(210.0), cartService.getCurrentCart("asd").getTotalPrice());
     }
 
     @Test
     public void changeQuantityProductTest(){
-        cartService.changeQuantityProduct(1L,5);
-        Assertions.assertEquals(6,cartService.getCurrentCart().getProducts()
+        cartService.changeQuantityProduct("asd",1L,5);
+        Assertions.assertEquals(6,cartService.getCurrentCart("asd").getProducts()
                 .stream()
                 .filter(prod -> prod.getProductId().equals(1L))
                 .findFirst().get().getQuantity());
-        Assertions.assertEquals(BigDecimal.valueOf(260.0),cartService.getCurrentCart().getTotalPrice());
+        Assertions.assertEquals(BigDecimal.valueOf(260.0),cartService.getCurrentCart("asd").getTotalPrice());
     }
 
     @Test
@@ -60,8 +60,8 @@ public class CartServiceTest {
         product.setTitle("Milk");
         product.setPrice(BigDecimal.valueOf(100.0));
         Mockito.doReturn(product).when(productServiceIntegration).findById(5L);
-        cartService.delete(5L);
-        Assertions.assertEquals(1, cartService.getCurrentCart().getProducts().size());
-        Assertions.assertEquals(BigDecimal.valueOf(60.0),cartService.getCurrentCart().getTotalPrice());
+        cartService.delete("asd",5L);
+        Assertions.assertEquals(1, cartService.getCurrentCart("asd").getProducts().size());
+        Assertions.assertEquals(BigDecimal.valueOf(60.0),cartService.getCurrentCart("asd").getTotalPrice());
     }
 }
