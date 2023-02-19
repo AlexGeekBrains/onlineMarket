@@ -27,7 +27,7 @@ public class OrderService {
 
     @Transactional
     public Order createOrder(String username, OrderDetailsDto orderDetailsDto) {
-        CartDto currentCart = cartServiceIntegration.getCart();
+        CartDto currentCart = cartServiceIntegration.getCart(username);
         Order order = new Order();
         order.setAddress(orderDetailsDto.getAddress());
         order.setPhone(orderDetailsDto.getPhone());
@@ -45,7 +45,7 @@ public class OrderService {
                 }).collect(Collectors.toList());
         order.setItems(items);
         ordersRepository.save(order);
-        cartServiceIntegration.clearCart();
+        cartServiceIntegration.clearCart(username);
         return order;
     }
 
