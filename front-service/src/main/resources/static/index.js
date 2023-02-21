@@ -22,6 +22,10 @@
                 templateUrl: 'orders/orders.html',
                 controller: 'ordersController'
             })
+            .when('/registration', {
+                templateUrl: 'registration/registration.html',
+                controller: 'registrationController'
+            })
             .otherwise({
                 redirectTo: '/'
             });
@@ -42,6 +46,12 @@
             }
             $http.defaults.headers.common.Authorization = 'Bearer ' + $localStorage.webMarketUser.token;
         }
+        if (!$localStorage.webMarketGuestCartId) {
+            $http.get('http://localhost:5555/cart/api/v1/cart/generate_uuid')
+                .then(function successCallback(response) {
+                    $localStorage.webMarketGuestCartId = response.data.value;
+                });
+        }
     }
 })();
 
@@ -54,15 +64,21 @@ angular.module('market').controller('indexController', function ($rootScope, $sc
                 if (response.data.token) {
                     $http.defaults.headers.common.Authorization = 'Bearer ' + response.data.token;
                     $localStorage.webMarketUser = {username: $scope.user.username, token: response.data.token};
-
+                    $scope.mergeCart();
                     $scope.user.username = null;
                     $scope.user.password = null;
-
                     $location.path('/');
                 }
             }, function errorCallback(response) {
             });
     };
+
+    $scope.mergeCart = function () {
+        $http({
+            url: 'http://localhost:5555/cart/api/v1/cart/'+$localStorage.webMarketGuestCartId+'/merge',
+            method: 'GET',
+        }).then(function (response) {});
+    }
 
 
     $rootScope.tryToLogout = function () {

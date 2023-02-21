@@ -6,7 +6,6 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Data
@@ -34,10 +33,9 @@ public class Cart {
                 return;
             }
         }
-        products.add(new CartItem(product.getId(), product.getTitle(), product.getPrice(),1));
+        products.add(new CartItem(product.getId(), product.getTitle(), product.getPrice(), 1));
         recalculate();
     }
-
 
     public void changeQuantity(Long productId, Integer delta) {
         for (int i = 0; i < products.size(); i++) {
@@ -58,12 +56,26 @@ public class Cart {
         recalculate();
     }
 
-    public void removeProduct(ProductDto product) {
-        products.remove(products.stream().filter(prod -> prod.getProductId().equals(product.getId())).findFirst().orElseThrow(() -> new RuntimeException("Product not found")));
+    public void removeProduct(Long productId) {
+        products.remove(products.stream().filter(prod -> prod.getProductId().equals(productId)).findFirst().orElseThrow(() -> new RuntimeException("Product not found")));
         recalculate();
     }
 
-    public List<CartItem> getProducts() {
-        return Collections.unmodifiableList(products);
+    public void mergeAndClearMergedCart(Cart mergedCart) {
+        for (int i = 0; i < mergedCart.products.size(); i++) {
+            boolean merge = false;
+            for (int j = 0; j < products.size(); j++) {
+                if (products.get(j).getProductId().equals(mergedCart.products.get(i).getProductId())) {
+                    products.get(j).changeQuantity(mergedCart.products.get(i).getQuantity());
+                    merge = true;
+                    break;
+                }
+            }
+            if (!merge) {
+                products.add(mergedCart.products.get(i));
+            }
+        }
+        recalculate();
+        mergedCart.clearCart();
     }
 }

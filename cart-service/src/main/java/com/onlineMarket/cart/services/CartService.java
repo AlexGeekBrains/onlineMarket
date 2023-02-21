@@ -5,52 +5,69 @@ import com.onlineMarket.api.dto.ProductDto;
 import com.onlineMarket.cart.integrations.ProductServiceIntegration;
 import com.onlineMarket.cart.model.Cart;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.function.Consumer;
 
-/*ДЗ
-* Если польщователь не залогинен, то ему должна быть выдана общая корзина
-* Если пользователь залогинен, то ему должна быть выдана его корзина
-* Добавит пагинацию на фронт (Кнопки  <- пред. стр. 1,2,3,4 ... след. стр.-> */
+/*Домашнее задание
+ реализовать мерж гостевой корзины с корзиной юзера, в момент авторизации */
 @Service
 @RequiredArgsConstructor
 public class CartService {
-    private Map<String, Cart> carts;
-
     private final ProductServiceIntegration productServiceIntegration;
+    private final RedisTemplate<String, Object> redisTemplate;
 
-    @PostConstruct
-    public void init() {
-        carts = new HashMap<>();
+    @Value("${cart-service.cart-prefix}")
+    private String cartPrefix;
 
-    }
 
-    public Cart getCurrentCart(String username) {
-        if (!carts.containsKey(username)) {
-            carts.put(username, new Cart());
+    public Cart getCurrentCart(String uuid) {
+        String targetUuid = cartPrefix + uuid;
+        if (Boolean.FALSE.equals(redisTemplate.hasKey(targetUuid))) {
+            redisTemplate.opsForValue().set(targetUuid, new Cart());
         }
-        return carts.get(username);
+        return (Cart) redisTemplate.opsForValue().get(targetUuid);
     }
 
-    public void add(String username, Long productId) {
+    public void add(String uuid, Long productId) {
         ProductDto product = productServiceIntegration.findById(productId);
-        getCurrentCart(username).addProduct(product);
-
+        execute(uuid, cart -> cart.addProduct(product));
     }
 
-    public void delete(String username, Long productId) {
-        ProductDto product = productServiceIntegration.findById(productId);
-        getCurrentCart(username).removeProduct(product);
+    public void delete(String uuid, Long productId) {
+        execute(uuid, cart -> cart.removeProduct(productId));
     }
 
-    public void clear(String username) {
-        getCurrentCart(username).clearCart();
+    public void clear(String uuid) {
+        execute(uuid, Cart::clearCart);
     }
 
-    public void changeQuantityProduct(String username, Long productId, Integer delta) {
-        getCurrentCart(username).changeQuantity(productId, delta);
+    public void changeQuantityProduct(String uuid, Long productId, Integer delta) {
+        execute(uuid, cart -> cart.changeQuantity(productId, delta));
+    }
+
+    private void execute(String uuid, Consumer<Cart> operation) {
+        Cart cart = getCurrentCart(uuid);
+        operation.accept(cart);
+        updateCart(uuid,cart);
+    }
+
+    public void mergeGuestCartWithUserCart(String uuid, String username){
+        Cart cartGuest = getCurrentCart(uuid);
+        Cart cartUser = getCurrentCart(username);
+        cartUser.mergeAndClearMergedCart(cartGuest);
+        updateCart(uuid,cartGuest);
+        updateCart(username,cartUser);
+    }
+    public String getCartUuid(String username, String uuid) {
+        if (username != null) {
+            return username;
+        }
+        return uuid;
+    }
+    private void updateCart(String uuid, Cart cart){
+        redisTemplate.opsForValue().set(cartPrefix+uuid,cart);
     }
 }
