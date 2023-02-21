@@ -2,12 +2,14 @@ package com.onlineMarket.cart.controllers;
 
 
 import com.onlineMarket.api.dto.CartDto;
+import com.onlineMarket.api.dto.StringResponse;
 import com.onlineMarket.cart.converters.CartConverter;
 import com.onlineMarket.cart.services.CartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Objects;
+import java.util.UUID;
+
 
 @RequiredArgsConstructor
 @RestController
@@ -16,44 +18,43 @@ public class CartController {
     private final CartService cartService;
     private final CartConverter cartConverter;
 
-    @GetMapping()
-    public CartDto getCurrentCart(@RequestHeader (name = "username" ,required = false) String username ) {
-        return cartConverter.entityToDto(cartService.getCurrentCart(Objects.requireNonNullElse(username, "sharedCart")));
+    @GetMapping("/generate_uuid")
+    public StringResponse generateUuid() {
+        return new StringResponse(UUID.randomUUID().toString());
     }
 
-    @GetMapping("/add")
-    public void addProductToCart(@RequestHeader (name = "username" ,required = false) String username, @RequestParam Long productId) {
-        if (username != null) {
-            cartService.add(username, productId);
-            return;
-        }
-        cartService.add("sharedCart", productId);
+    @GetMapping("/{uuid}") //
+    public CartDto getCurrentCart(@PathVariable String uuid, @RequestHeader(name = "username", required = false) String username) {
+        String targetUuid = cartService.getCartUuid(username, uuid);
+        return cartConverter.entityToDto(cartService.getCurrentCart(targetUuid));
     }
 
-    @GetMapping("/remove/{productId}")
-    public void removeProductFromCart(@RequestHeader (name = "username" ,required = false) String username, @PathVariable Long productId) {
-        if (username != null) {
-            cartService.delete(username, productId);
-            return;
-        }
-        cartService.delete("sharedCart", productId);
+    @GetMapping("/{uuid}/add")
+    public void addProductToCart(@PathVariable String uuid, @RequestHeader(name = "username", required = false) String username, @RequestParam Long productId) {
+        String targetUuid = cartService.getCartUuid(username, uuid);
+        cartService.add(targetUuid, productId);
     }
 
-    @GetMapping("/clear")
-    public void clearCart(@RequestHeader (name = "username" ,required = false) String username) {
-        if (username != null) {
-            cartService.clear(username);
-            return;
-        }
-        cartService.clear("sharedCart");
+    @GetMapping("/{uuid}/remove/{productId}")
+    public void removeProductFromCart(@PathVariable String uuid, @RequestHeader(name = "username", required = false) String username, @PathVariable Long productId) {
+        String targetUuid = cartService.getCartUuid(username, uuid);
+        cartService.delete(targetUuid, productId);
     }
 
-    @GetMapping("/change_quantity")
-    public void changeQuantityProductInCart(@RequestHeader (name = "username" ,required = false) String username, @RequestParam Long productId, Integer delta) {
-        if (username != null) {
-            cartService.changeQuantityProduct(username, productId, delta);
-            return;
-        }
-        cartService.changeQuantityProduct("sharedCart", productId, delta);
+    @GetMapping("/{uuid}/clear")
+    public void clearCart(@PathVariable String uuid, @RequestHeader(name = "username", required = false) String username) {
+        String targetUuid = cartService.getCartUuid(username, uuid);
+        cartService.clear(targetUuid);
+    }
+
+    @GetMapping("/{uuid}/merge")
+    public void mergeCart(@PathVariable String uuid, @RequestHeader(name = "username") String username) {
+        cartService.mergeGuestCartWithUserCart(uuid, username);
+    }
+
+    @GetMapping("/{uuid}/change_quantity")
+    public void changeQuantityProductInCart(@PathVariable String uuid, @RequestHeader(name = "username", required = false) String username, @RequestParam Long productId, Integer delta) {
+        String targetUuid = cartService.getCartUuid(username, uuid);
+        cartService.changeQuantityProduct(targetUuid, productId, delta);
     }
 }

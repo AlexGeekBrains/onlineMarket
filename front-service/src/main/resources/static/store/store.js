@@ -66,7 +66,7 @@ angular.module('market').controller('storeController', function ($scope, $http, 
 
     $scope.addToCart = function (productId) {
         $http({
-            url: cartContextPath + 'api/v1/cart/add',
+            url: cartContextPath + 'api/v1/cart/'+$localStorage.webMarketGuestCartId + '/add',
             method: 'GET',
             params: {
                 productId: productId,
