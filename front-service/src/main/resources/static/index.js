@@ -73,11 +73,26 @@ angular.module('market').controller('indexController', function ($rootScope, $sc
             });
     };
 
+
+    $scope.auth = function () {
+        $http.get('http://localhost:5555/auth/authenticate')
+            .then(function (response) {
+                console.log(response.data)
+            });
+    };
+
+
+    $('#Oa2').click(function () {
+        window.location.href = 'http://localhost:8543/realms/master/protocol/openid-connect/auth?client_id=unsafe&response_type=code&redirect_uri=http://localhost:5555/auth/authenticate';
+        return false;
+    });
+
     $scope.mergeCart = function () {
         $http({
-            url: 'http://localhost:5555/cart/api/v1/cart/'+$localStorage.webMarketGuestCartId+'/merge',
+            url: 'http://localhost:5555/cart/api/v1/cart/' + $localStorage.webMarketGuestCartId + '/merge',
             method: 'GET',
-        }).then(function (response) {});
+        }).then(function (response) {
+        });
     }
 
 
