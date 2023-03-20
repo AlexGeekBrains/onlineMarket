@@ -11,8 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.function.Consumer;
 
-/*Домашнее задание
- реализовать мерж гостевой корзины с корзиной юзера, в момент авторизации */
 @Service
 @RequiredArgsConstructor
 public class CartService {

@@ -7,6 +7,8 @@ import com.onlineMarket.core.soap.products.ProductSoap;
 import com.onlineMarket.core.data.Product;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+
 
 @Component
 public class ProductConverter {
@@ -20,12 +22,13 @@ public class ProductConverter {
     }
 
     public CartItemDto entityToCartItem(Product product, int quantity) {
-        CartItemDto cartItemDto = new CartItemDto();
-        cartItemDto.setProductTitle(product.getTitle());
-        cartItemDto.setProductId(product.getId());
-        cartItemDto.setQuantity(quantity);
-        cartItemDto.setPricePerProduct(product.getPrice());
-        return cartItemDto;
+      return CartItemDto.builder()
+              .price(product.getPrice().multiply(BigDecimal.valueOf(quantity)))
+              .pricePerProduct(product.getPrice())
+              .productId(product.getId())
+              .productTitle(product.getTitle())
+              .quantity(quantity)
+              .build();
     }
 
     public ProductSoap entityToProductSoap(Product product) {
