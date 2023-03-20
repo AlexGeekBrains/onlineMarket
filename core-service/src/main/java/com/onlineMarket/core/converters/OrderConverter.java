@@ -17,13 +17,13 @@ public class OrderConverter {
     }
 
     public OrderDto entityToDto(Order order) {
-        OrderDto out = new OrderDto();
-        out.setId(order.getId());
-        out.setAddress(order.getAddress());
-        out.setPhone(order.getPhone());
-        out.setTotalPrice(order.getTotalPrice());
-        out.setUsername(order.getUsername());
-        out.setItems(order.getItems().stream().map(orderItemConverter::entityToDto).collect(Collectors.toList()));
-        return out;
+        return OrderDto.builder()
+                .id(order.getId())
+                .address(order.getAddress())
+                .phone(order.getPhone())
+                .totalPrice(order.getTotalPrice())
+                .username(order.getUsername())
+                .items(order.getItems().stream().map(orderItemConverter::entityToDto).collect(Collectors.toList()))
+                .build();
     }
 }
