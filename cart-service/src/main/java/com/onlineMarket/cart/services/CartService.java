@@ -2,22 +2,23 @@ package com.onlineMarket.cart.services;
 
 
 import com.onlineMarket.api.dto.ProductDto;
+import com.onlineMarket.cart.events.MyEvent;
 import com.onlineMarket.cart.integrations.ProductServiceIntegration;
 import com.onlineMarket.cart.model.Cart;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.function.Consumer;
 
-/*Домашнее задание
- реализовать мерж гостевой корзины с корзиной юзера, в момент авторизации */
 @Service
 @RequiredArgsConstructor
 public class CartService {
     private final ProductServiceIntegration productServiceIntegration;
     private final RedisTemplate<String, Object> redisTemplate;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     @Value("${cart-service.cart-prefix}")
     private String cartPrefix;
@@ -34,6 +35,7 @@ public class CartService {
     public void add(String uuid, Long productId) {
         ProductDto product = productServiceIntegration.findById(productId);
         execute(uuid, cart -> cart.addProduct(product));
+        applicationEventPublisher.publishEvent(new MyEvent(this, product.toString()+"товар добавлен в корзину"));
     }
 
     public void delete(String uuid, Long productId) {
