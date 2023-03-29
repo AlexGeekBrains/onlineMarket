@@ -4,6 +4,7 @@ import com.onlineMarket.api.ResourceNotFoundException;
 import com.onlineMarket.core.repository.specifications.ProductSpecification;
 import com.onlineMarket.core.data.Product;
 import com.onlineMarket.core.repository.ProductRepository;
+import com.onlineMarket.core.services.identity.ProductIdentityMap;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,6 +21,7 @@ import java.util.Optional;
 public class ProductService {
     private final ProductRepository productRepository;
     private final ProductSpecification productSpecification;
+    private final ProductIdentityMap productIdentityMap;
 
     public List<Product> getAllProducts() {
         return productRepository.findAll();
@@ -30,7 +32,12 @@ public class ProductService {
     }
 
     public Optional<Product> findById(Long id) {
-        return productRepository.findById(id);
+        if (!productIdentityMap.isContains(id)) {
+            Optional<Product> product = productRepository.findById(id);
+            product.ifPresent(productIdentityMap::addProduct);
+            return product;
+        }
+        return Optional.ofNullable(productIdentityMap.getProduct(id));
     }
 
     public Product saveProduct(Product product) {

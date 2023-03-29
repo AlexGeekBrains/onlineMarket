@@ -11,12 +11,20 @@ import org.springframework.stereotype.Component;
 @Component
 public class ProductConverter {
 
+    public ProductDto entityToDto(Product product) {
+        return new ProductDto(product.getId(), product.getTitle(), product.getPrice());
+    }
+
     public Product dtoToEntity(ProductDto productDto) {
         return new Product(productDto.getId(), productDto.getTitle(), productDto.getPrice());
     }
 
-    public ProductDto entityToDto(Product product) {
-        return new ProductDto(product.getId(), product.getTitle(), product.getPrice());
+    public ProductSoap entityToProductSoap(Product product) {
+        ProductSoap productSoap = new ProductSoap();
+        productSoap.setId(product.getId());
+        productSoap.setCost(product.getPrice());
+        productSoap.setTitle(product.getTitle());
+        return productSoap;
     }
 
     public CartItemDto entityToCartItem(Product product, int quantity) {
@@ -26,13 +34,5 @@ public class ProductConverter {
         cartItemDto.setQuantity(quantity);
         cartItemDto.setPricePerProduct(product.getPrice());
         return cartItemDto;
-    }
-
-    public ProductSoap entityToProductSoap(Product product) {
-        ProductSoap productSoap = new ProductSoap();
-        productSoap.setId(product.getId());
-        productSoap.setCost(product.getPrice());
-        productSoap.setTitle(product.getTitle());
-        return productSoap;
     }
 }
